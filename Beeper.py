@@ -1,5 +1,7 @@
 import time
-import numpy, pygame, math
+import math
+import numpy
+import pygame
 
 
 def calculate_sine_pos(amplitude, frequency, time_):

@@ -1,5 +1,6 @@
 from dictionary import Dictionary
 from Beeper import Beeper
+from TextToSpeech import TextToSpeech
 from time import sleep
 
 DOT_TIME = 0.1  # 0.1 second dot timing, you can change this here (equals about 12 words per min)
@@ -9,18 +10,21 @@ FREQUENCY = 600  # Hz
 class Translator:
     def __init__(self):
 
-        self.audio = False
+        self.audio = None
         self.space_symbol = '/'
 
         self.ask_on_start()
 
-    def ask_on_start(self):
-        enable_audio = input('Enable Audio? (Y/N)\n').lower()
-        if enable_audio == 'y':
-            self.audio = True
-        else:
-            print('Disabling Audio.')
+    def ask_audio(self):
+        if self.audio is None:
+            enable_audio = input('Enable Audio? (Y/N)\n').lower()
+            if enable_audio == 'y':
+                self.audio = True
+            else:
+                print('Disabling Audio.')
 
+    def ask_on_start(self):
+        self.ask_audio()
         ask_mode = input('Decode or encode? -q to exit.\n').lower()
 
         if ask_mode == 'q':
@@ -30,12 +34,15 @@ class Translator:
             print('Invalid input!')
             return self.ask_on_start()
         self.take_input(ask_mode)
+        return self.ask_on_start()
 
     def take_input(self, mode):
         self.space_symbol = input('Enter symbol used as space, if any. Empty output defaults to "/":\n').strip()
 
-        if self.space_symbol:
+        if self.space_symbol != '':
             self.space_symbol = self.space_symbol[0]
+        else:
+            self.space_symbol = '/'
 
         dictionary_class = Dictionary(self.space_symbol)
 
@@ -68,6 +75,9 @@ class Translator:
         decoded_msg = ''.join(output)
         print(decoded_msg)
 
+        if self.audio:
+            self.decode_audio(decoded_msg)
+
     def encode_audio(self, message):
         beeper = Beeper(dot_time=DOT_TIME, frequency=FREQUENCY)
         for symbol in message:
@@ -77,6 +87,10 @@ class Translator:
                 sleep(beeper.w_pause)
             else:
                 beeper.play(symbol)
+
+    def decode_audio(self, message):
+        engine = TextToSpeech()
+        engine.say(message)
 
 
 if __name__ == '__main__':
