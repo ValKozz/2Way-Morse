@@ -30,11 +30,10 @@ class Translator:
         if ask_mode == 'q':
             exit()
 
-        if ask_mode != 'encode' and ask_mode != 'decode':
+        while ask_mode != 'encode' and ask_mode != 'decode':
             print('Invalid input!')
-            return self.ask_on_start()
+
         self.take_input(ask_mode)
-        return self.ask_on_start()
 
     def take_input(self, mode):
         self.space_symbol = input('Enter symbol used as space, if any. Empty output defaults to "/":\n').strip()
